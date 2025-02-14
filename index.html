@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Big Bike Online Store</title>
+    <style>
+        body {
+            background-color: #a3a3a3;
+            color: white;
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: auto;
+            padding: 20px;
+        }
+        .product-list {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 25px;
+        }
+        .item {
+            border: 2px solid rgb(117, 116, 116);
+            padding: 18px;
+            text-align: center;
+            width: 270px;
+            transition: transform 0.3s ease-in-out;
+            border-radius: 12px;
+            background-color: #000000;
+            box-shadow: 0 4px 10px rgba(255, 255, 255, 0.1);
+        }
+        .item:hover {
+            transform: translateY(-10px);
+        }
+        .item img {
+            width: 100%;
+            max-width: 733px;
+            height: auto;
+            border-radius: 8px;
+            transition: transform 0.3s ease-in-out;
+        }
+        .item img:hover {
+            transform: rotate(-5deg) scale(1.05);
+        }
+        .cart-section {
+            display: none;
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #3b3b3b;
+            border-radius: 12px;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+            transition: opacity 0.3s ease-in-out;
+        }
+        .cart-entry {
+            border-bottom: 2px solid white;
+            padding: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 16px;
+        }
+        button {
+            background-color: white;
+            color: black;
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+            margin-top: 10px;
+            border-radius: 6px;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #444444;
+            color: white;
+        }
+        .toggle-cart {
+            display: block;
+            margin: 20px auto;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        @media (max-width: 768px) {
+            .item {
+                width: 100%;
+                max-width: 360px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Online Store</h1>
+        <div class="product-list" id="product-list"></div>
+        <button class="toggle-cart" onclick="toggleCart()">View Cart</button>
+        <div class="cart-section" id="cart-section">
+            <h2>Shopping Cart</h2>
+            <div id="cart-content"></div>
+            <h3>Total: $<span id="cart-total">0</span></h3>
+        </div>
+    </div>
+    <script>
+        const inventory = [
+            { name: " S 1000 RR ", price: 28000, image: "images (1).jpg" },
+            { name: "Ninja ZX-10R", price: 19500, image: "images (2).jpg" },
+            { name: "The R-Series Pedigree", price: 21000, image: "images (3).jpg" }
+        ];
+        
+        const cartItems = [];
+        
+        function renderProducts() {
+            const productContainer = document.getElementById("product-list");
+            productContainer.innerHTML = "";
+            inventory.forEach((item, idx) => {
+                const productBox = document.createElement("div");
+                productBox.classList.add("item");
+                productBox.innerHTML = `
+                    <img src="${item.image}" alt="${item.name}">
+                    <h3>${item.name}</h3>
+                    <p>Price: $${item.price}</p>
+                    <button onclick="addToCart(${idx})">Add to Cart</button>
+                `;
+                productContainer.appendChild(productBox);
+            });
+        }
+        
+        function addToCart(idx) {
+            const foundItem = cartItems.find(cartItem => cartItem.product.name === inventory[idx].name);
+            if (foundItem) {
+                foundItem.quantity++;
+            } else {
+                cartItems.push({ product: inventory[idx], quantity: 1 });
+            }
+            updateCart();
+        }
+        
+        function removeItem(idx) {
+            cartItems.splice(idx, 1);
+            updateCart();
+        }
+        
+        function updateCart() {
+            const cartDisplay = document.getElementById("cart-content");
+            const totalAmount = document.getElementById("cart-total");
+            cartDisplay.innerHTML = "";
+            let sum = 0;
+            cartItems.forEach((entry, i) => {
+                sum += entry.product.price * entry.quantity;
+                const cartBox = document.createElement("div");
+                cartBox.classList.add("cart-entry");
+                cartBox.innerHTML = `
+                    ${entry.product.name} - $${entry.product.price} x ${entry.quantity}
+                    <button onclick="removeItem(${i})">Remove</button>
+                `;
+                cartDisplay.appendChild(cartBox);
+            });
+            totalAmount.textContent = sum;
+        }
+        
+        function toggleCart() {
+            const cartSection = document.getElementById("cart-section");
+            cartSection.style.display = (cartSection.style.display === "none" || cartSection.style.display === "") ? "block" : "none";
+        }
+        
+        renderProducts();
+    </script>
+</body>
+</html>
